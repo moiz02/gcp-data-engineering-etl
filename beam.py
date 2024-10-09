@@ -1,8 +1,8 @@
 
-#project-id:etl-data-pipeline-project
-delivered_table_spec = 'etl-data-pipeline-project:food-dataset1.delivered_orders'
-#project-id:etl-data-pipeline-project
-other_table_spec = 'etl-data-pipeline-project:food-dataset1.other_status_orders'
+#project-id:dataset_id.table_id
+delivered_table_spec = 'project-id:dataset_food_orders.delivered_orders'
+#project-id:dataset_id.table_id
+other_table_spec = 'project-id:dataset_food_orders.other_status_orders'
 
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions
@@ -95,7 +95,7 @@ other_orders = (
 #BigQuery 
 client = bigquery.Client()
 
-dataset_id = "etl-data-pipeline-project.food-dataset1"
+dataset_id = "food-orders-407014.dataset_food_orders"
 
 try:
 	client.get_dataset(dataset_id)

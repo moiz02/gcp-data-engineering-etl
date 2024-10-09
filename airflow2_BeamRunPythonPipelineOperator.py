@@ -49,7 +49,7 @@ with DAG('food_orders_dag',
 
     gcs_sensor = GCSObjectsWithPrefixExistenceSensor(
         task_id='gcs_sensor',
-        bucket='food-dataset1', #Add bucket name
+        bucket='bucket-name', #Add bucket name
         prefix='food_daily',
         mode='poke',
         poke_interval=60,  #Check every 60 seconds
@@ -59,16 +59,16 @@ with DAG('food_orders_dag',
     list_files_task = PythonOperator(
         task_id='list_files',
         python_callable=list_files,
-        op_kwargs={'bucket_name': 'food-dataset1', 'prefix': 'food_daily'}, #Add bucket name
+        op_kwargs={'bucket_name': 'bucket-name', 'prefix': 'food_daily'}, #Add bucket name
         do_xcom_push=True,  #This will push the return value of list_files to XCom
     )
 
     beamtask = BeamRunPythonPipelineOperator(
         task_id='beam_task',
         runner='DataflowRunner',
-        py_file='gs://us-south1-food-delivery-com-09c7e823-bucket/beam.py',
+        py_file='gs://composer-bucket/beam.py',
         pipeline_options={
-            "input": 'gs://food-dataset1/{{ task_instance.xcom_pull("list_files") }}', #Add bucket name
+            "input": 'gs://bucket-name/{{ task_instance.xcom_pull("list_files") }}', #Add bucket name
             #add other pipeline options if needed
         },
         py_options=[],
@@ -76,8 +76,8 @@ with DAG('food_orders_dag',
         py_system_site_packages=False,
         dataflow_config=DataflowConfiguration(
             job_name='food_orders_processing_job',
-            project_id='etl-data-pipeline-project', #Add project-id
-            location='us-south1', #Add region
+            project_id='project-id', #Add project-id
+            location='dataflow-job-region', #Add region
         ),
     )
 
